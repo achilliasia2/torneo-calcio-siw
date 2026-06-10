@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: i_mio_layout(~{::section})}">
+<body>
+<section>
+    <div class="section-header">
+        <div>
+            <span class="section-title" th:text="${giocatore.id == null} ? 'Nuovo Giocatore' : 'Modifica Giocatore'">Form</span>
+            <p style="font-size: 13px; color: #64748b;">Squadra: <strong th:text="${squadra.nome}"></strong></p>
+        </div>
+    </div>
+
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <form th:action="${giocatore.id == null} ? @{/admin/squadre/{sid}/giocatori/nuovo(sid=${squadra.id})} : @{/admin/giocatori/{id}/modifica(id=${giocatore.id})}"
+              th:object="${giocatore}" method="post">
+            <div th:if="${#fields.hasErrors('*')}" style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #fee2e2; color: #991b1b; font-size: 13px;">
+                Controlla i dati inseriti.
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Nome</label>
+                    <input type="text" th:field="*{nome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+                </div>
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Cognome</label>
+                    <input type="text" th:field="*{cognome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Data di nascita</label>
+                <input type="date" th:field="*{dataNascita}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px;">
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Ruolo</label>
+                    <select th:field="*{ruolo}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background: white;" required>
+                        <option value="">-- Ruolo --</option>
+                        <option value="Portiere">Portiere</option>
+                        <option value="Difensore">Difensore</option>
+                        <option value="Centrocampista">Centrocampista</option>
+                        <option value="Attaccante">Attaccante</option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Altezza (cm)</label>
+                    <input type="number" th:field="*{altezza}" step="0.1" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+                </div>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="card-btn" style="flex: 2; border: none; cursor: pointer;">Salva Giocatore</button>
+                <a th:href="@{/squadre/{id}(id=${squadra.id})}" style="flex: 1; text-align: center; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #64748b; font-size: 14px;">Annulla</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

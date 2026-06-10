@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: i_mio_layout(~{::section})}">
+<body>
+<section>
+    <div class="section-header">
+        <span class="section-title">Registra Nuova Partita</span>
+    </div>
+
+    <div class="card" style="max-width: 600px; margin: 0 auto;">
+        <form th:action="@{/admin/partite/nuova}" th:object="${partita}" method="post">
+            <div th:if="${#fields.hasErrors('*')}" style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #fee2e2; color: #991b1b; font-size: 13px;">
+                Controlla i dati inseriti.
+            </div>
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Data e ora</label>
+                <input type="datetime-local" th:field="*{dataOra}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Luogo</label>
+                <input type="text" th:field="*{luogo}" placeholder="Es. Campo Centrale" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Torneo</label>
+                <select th:field="*{torneo}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white;" required>
+                    <option value="">-- Seleziona torneo --</option>
+                    <option th:each="t : ${tornei}" th:value="${t.id}" th:text="${t.nome}"></option>
+                </select>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Squadra Casa</label>
+                    <select th:field="*{squadraHome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white;" required>
+                        <option value="">-- Seleziona --</option>
+                        <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                    </select>
+                </div>
+                <div>
+                    <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Squadra Ospite</label>
+                    <select th:field="*{squadraAway}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white;" required>
+                        <option value="">-- Seleziona --</option>
+                        <option th:each="s : ${squadre}" th:value="${s.id}" th:text="${s.nome}"></option>
+                    </select>
+                </div>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Arbitro</label>
+                <select th:field="*{arbitro}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px; background:white;" required>
+                    <option value="">-- Seleziona arbitro --</option>
+                    <option th:each="a : ${arbitri}" th:value="${a.id}" th:text="${a.cognome + ' ' + a.nome}"></option>
+                </select>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="card-btn" style="flex: 2; border: none; cursor: pointer;">Salva Partita</button>
+                <a th:href="@{/tornei}" style="flex: 1; text-align: center; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #64748b; font-size: 14px;">Annulla</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

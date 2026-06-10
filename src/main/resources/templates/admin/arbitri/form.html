@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: i_mio_layout(~{::section})}">
+<body>
+<section>
+    <div class="section-header">
+        <span class="section-title" th:text="${arbitro.id == null} ? 'Nuovo Arbitro' : 'Modifica Arbitro'">Form</span>
+    </div>
+
+    <div class="card" style="max-width: 500px; margin: 0 auto;">
+        <form th:action="${arbitro.id == null} ? @{/admin/arbitri/nuovo} : @{/admin/arbitri/{id}/modifica(id=${arbitro.id})}"
+              th:object="${arbitro}" method="post">
+            <div th:if="${#fields.hasErrors('*')}" style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #fee2e2; color: #991b1b; font-size: 13px;">
+                Controlla i dati inseriti.
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Nome</label>
+                <input type="text" th:field="*{nome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Cognome</label>
+                <input type="text" th:field="*{cognome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="margin-bottom: 20px;">
+                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Codice Arbitrale</label>
+                <input type="text" th:field="*{codiceArbitrale}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            </div>
+
+            <div style="display: flex; gap: 10px;">
+                <button type="submit" class="card-btn" style="flex: 2; border: none; cursor: pointer;">Salva</button>
+                <a th:href="@{/admin/arbitri}" style="flex: 1; text-align: center; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #64748b; font-size: 14px;">Annulla</a>
+            </div>
+        </form>
+    </div>
+</section>
+</body>
+</html>

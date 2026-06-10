@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{layout :: i_mio_layout(~{::#contenuto_home})}">
+<head>
+    <title>Home - Tornei Calcio</title>
+</head>
+<body>
+
+    <div id="contenuto_home">
+        <div class="section-header">
+            <h2 class="section-title">Tornei Disponibili</h2>
+            <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/tornei/nuovo}" class="btn-action">+ Nuovo Torneo</a>
+        </div>
+
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+            
+            <div class="card" th:each="torneo : ${tornei}" style="margin-bottom: 0;">
+                <span class="card-badge badge-blue" th:text="${torneo.anno}">2026</span>
+                
+                <h3 th:text="${torneo.nome}" style="margin: 10px 0 5px 0; font-size: 18px; font-weight: 600;">Nome Torneo</h3>
+                <p th:text="${torneo.descrizione}" style="font-size: 14px; color: #64748b; margin-bottom: 15px;">Descrizione del torneo...</p>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: auto; padding-top: 15px; border-top: 1px solid #f1f5f9;">
+                    <a th:href="@{'/tornei/' + ${torneo.id}}" class="btn-action" style="padding: 6px 12px; font-size: 13px;">Dettaglio</a>
+                    
+                    <span style="font-size: 12px; color: #94a3b8; font-weight: 500;" 
+                          th:text="${torneo.partite != null ? #lists.size(torneo.partite) : 0} + ' partite'">
+                        0 partite
+                    </span>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(tornei)}" style="grid-column: 1/-1; text-align: center; padding: 40px; color: #64748b;">
+                <p>Nessun torneo disponibile al momento.</p>
+            </div>
+            
+        </div>
+    </div>
+
+</body>
+</html>
