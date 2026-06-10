@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Controller
 
@@ -45,7 +47,13 @@ public class TorneoController {
     @GetMapping("/tornei")
     public String listaTornei(Model model) {
         List<Torneo> tornei = torneoService.findAll();
+        Map<Long, Long> numeroPartitePerTorneo = tornei.stream()
+                .collect(Collectors.toMap(
+                        Torneo::getId,
+                        torneo -> partitaService.countByTorneoId(torneo.getId())
+                ));
         model.addAttribute("tornei", tornei);
+        model.addAttribute("numeroPartitePerTorneo", numeroPartitePerTorneo);
         return "tornei/lista";
     }
 

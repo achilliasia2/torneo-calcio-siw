@@ -17,7 +17,7 @@
             
             <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; pt: 15px; margin-top: auto;">
                 <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="card-btn" style="text-decoration: none;">Vedi Dettaglio</a>
-                <span style="font-size: 12px; color: #94a3b8;" th:text="${#lists.size(torneo.partite)} + ' partite'">0 partite</span>
+                <span style="font-size: 12px; color: #94a3b8;" th:text="${numeroPartitePerTorneo[torneo.id]} + ' partite'">0 partite</span>
             </div>
         </div>
     </div>

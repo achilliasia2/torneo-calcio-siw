@@ -2,7 +2,6 @@ package it.uniroma3.siw.torneo_calcio.controller;
 
 import it.uniroma3.siw.torneo_calcio.model.Utente;
 import it.uniroma3.siw.torneo_calcio.service.UtenteService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -37,7 +36,13 @@ public class AuthController {
     }
 
     @PostMapping("/registrazione")
-    public String registraUtente(@Valid @ModelAttribute Utente utente, BindingResult bindingResult) {
+    public String registraUtente(@ModelAttribute Utente utente, BindingResult bindingResult) {
+        if (utente.getUsername() == null || utente.getUsername().isBlank()) {
+            bindingResult.rejectValue("username", "required", "Username obbligatorio");
+        }
+        if (utente.getPassword() == null || utente.getPassword().isBlank()) {
+            bindingResult.rejectValue("password", "required", "Password obbligatoria");
+        }
         if (bindingResult.hasErrors()) {
             return "auth/registrazione";
         }
