@@ -8,6 +8,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @Controller
 public class HomeController {
 
@@ -31,7 +34,14 @@ public class HomeController {
         model.addAttribute("numeroPartite", partitaService.findAll().size());
         
         // 3. Passiamo la lista tornei per le card in basso
-        model.addAttribute("tornei", torneoService.findAll());
+        var tornei = torneoService.findAll();
+        Map<Long, Long> numeroPartitePerTorneo = tornei.stream()
+                .collect(Collectors.toMap(
+                        torneo -> torneo.getId(),
+                        torneo -> partitaService.countByTorneoId(torneo.getId())
+                ));
+        model.addAttribute("tornei", tornei);
+        model.addAttribute("numeroPartitePerTorneo", numeroPartitePerTorneo);
         
         return "index"; // Deve esserci un file templates/index.html
     }

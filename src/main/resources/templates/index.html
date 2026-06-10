@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
       th:replace="~{layout :: i_mio_layout(~{::#contenuto_home})}">
 <head>
     <title>Home - Tornei Calcio</title>
@@ -24,7 +25,7 @@
                     <a th:href="@{'/tornei/' + ${torneo.id}}" class="btn-action" style="padding: 6px 12px; font-size: 13px;">Dettaglio</a>
                     
                     <span style="font-size: 12px; color: #94a3b8; font-weight: 500;" 
-                          th:text="${torneo.partite != null ? #lists.size(torneo.partite) : 0} + ' partite'">
+                          th:text="${numeroPartitePerTorneo[torneo.id]} + ' partite'">
                         0 partite
                     </span>
                 </div>

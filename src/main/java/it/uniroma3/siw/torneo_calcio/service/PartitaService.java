@@ -37,6 +37,11 @@ public class PartitaService {
         return partitaRepository.findByTorneoId(torneoId);
     }
 
+    @Transactional(readOnly = true)
+    public long countByTorneoId(Long torneoId) {
+        return partitaRepository.countByTorneoId(torneoId);
+    }
+
     @Transactional
     public Partita save(Partita partita) {
         return partitaRepository.save(partita);

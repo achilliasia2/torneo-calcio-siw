@@ -8,4 +8,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface PartitaRepository extends JpaRepository<Partita, Long> {
     List<Partita> findByTorneoId(Long torneoId);
+    long countByTorneoId(Long torneoId);
 }
