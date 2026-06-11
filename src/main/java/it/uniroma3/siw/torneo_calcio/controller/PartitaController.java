@@ -13,6 +13,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Controller
 
 public class PartitaController {
@@ -41,34 +43,58 @@ public class PartitaController {
     }
 
     @GetMapping("/admin/partite/nuova")
-    public String nuovaPartitaForm(Model model) {
-        model.addAttribute("partita", new Partita());
-        model.addAttribute("tornei", torneoService.findAll());
-        model.addAttribute("squadre", squadraService.findAll());
-        model.addAttribute("arbitri", arbitroService.findAll());
+    public String nuovaPartitaForm(@RequestParam(required = false) Long torneoId, Model model) {
+        Partita partita = new Partita();
+        if (torneoId != null) {
+            torneoService.findById(torneoId).ifPresent(partita::setTorneo);
+        }
+
+        model.addAttribute("partita", partita);
+        caricaDatiForm(model, torneoId);
         return "admin/partite/form";
     }
 
     @PostMapping("/admin/partite/nuova")
     public String salvaPartita(@Valid @ModelAttribute Partita partita, BindingResult bindingResult, Model model) {
+        Long torneoId = partita.getTorneo() != null ? partita.getTorneo().getId() : null;
         if (bindingResult.hasErrors()) {
-            model.addAttribute("tornei", torneoService.findAll());
-            model.addAttribute("squadre", squadraService.findAll());
-            model.addAttribute("arbitri", arbitroService.findAll());
+            caricaDatiForm(model, torneoId);
             return "admin/partite/form";
         }
         if (partita.getSquadraHome() != null
                 && partita.getSquadraAway() != null
                 && partita.getSquadraHome().getId().equals(partita.getSquadraAway().getId())) {
             bindingResult.reject("squadre.uguali", "Le due squadre devono essere diverse");
-            model.addAttribute("tornei", torneoService.findAll());
-            model.addAttribute("squadre", squadraService.findAll());
-            model.addAttribute("arbitri", arbitroService.findAll());
+            caricaDatiForm(model, torneoId);
+            return "admin/partite/form";
+        }
+        if (!squadreIscritteAlTorneo(torneoId, partita)) {
+            bindingResult.reject("squadre.non.iscritte", "Le squadre devono essere iscritte al torneo selezionato");
+            caricaDatiForm(model, torneoId);
             return "admin/partite/form";
         }
         partita.setStato(StatoPartita.SCHEDULED);
         partitaService.save(partita);
-        return "redirect:/tornei";
+        return "redirect:/tornei/" + torneoId;
+    }
+
+    private void caricaDatiForm(Model model, Long torneoId) {
+        model.addAttribute("tornei", torneoService.findAll());
+        model.addAttribute("squadre", torneoId != null ? torneoService.findSquadreByTorneoId(torneoId) : List.of());
+        model.addAttribute("arbitri", arbitroService.findAll());
+        model.addAttribute("torneoSelezionatoId", torneoId);
+    }
+
+    private boolean squadreIscritteAlTorneo(Long torneoId, Partita partita) {
+        if (torneoId == null || partita.getSquadraHome() == null || partita.getSquadraAway() == null) {
+            return false;
+        }
+        List<Long> squadreIscritte = torneoService.findSquadreByTorneoId(torneoId)
+                .stream()
+                .map(squadra -> squadra.getId())
+                .toList();
+        return squadreIscritte.contains(partita.getSquadraHome().getId())
+                && squadreIscritte.contains(partita.getSquadraAway().getId());
     }
 
     @GetMapping("/admin/partite/{id}/risultato")

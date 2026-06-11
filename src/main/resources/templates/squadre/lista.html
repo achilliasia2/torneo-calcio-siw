@@ -2,54 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: i_mio_layout(~{::section})}">
 <body>
 <section>
-    <div class="section-header">
-        <span class="section-title">Squadre Registrate</span>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/squadre/nuova}" class="card-badge badge-green" style="text-decoration: none;">+ Registra Squadra</a>
+    <div class="page-hero">
+        <span class="page-hero-badge" th:text="${#lists.size(squadre)}">0</span>
+        <h1>Squadre</h1>
+        <p>Tutte le squadre registrate nel sito, con citta, anno di fondazione e rosa dei giocatori.</p>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px;">
-        <div class="card" th:each="squadra : ${squadre}" style="border-radius: 12px;">
-            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                <div>
-                    <h3 style="margin: 0; font-size: 18px; color: #1e293b;" th:text="${squadra.nome}">Nome Squadra</h3>
-                    <p style="font-size: 13px; color: #64748b; margin-top: 4px;">
-                        📍 <span th:text="${squadra.citta}">Città</span>
-                    </p>
+    <div class="section-header">
+        <span class="section-title">Elenco squadre</span>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/squadre/nuova}" class="btn-action">Registra squadra</a>
+    </div>
+
+    <div class="sport-grid" th:if="${!#lists.isEmpty(squadre)}">
+        <div class="sport-card team-card" th:each="squadra : ${squadre}">
+            <a th:href="@{/squadre/{id}(id=${squadra.id})}" class="sport-card-link">
+                <div style="display: flex; justify-content: space-between; gap: 12px; align-items: flex-start; margin-bottom: 28px;">
+                    <div>
+                        <h3 style="font-size: 22px; color: #1e3a8a; margin-bottom: 6px;" th:text="${squadra.nome}">Nome Squadra</h3>
+                        <p style="color: #64748b; font-size: 14px;" th:text="${squadra.citta}">Citta</p>
+                    </div>
+                    <span class="card-badge badge-blue" th:text="${squadra.annoFondazione}">2026</span>
                 </div>
-                <span class="card-badge badge-purple" th:text="${squadra.annoFondazione}"></span>
-            </div>
-            
-            <div style="margin-top: 20px; display: flex; gap: 8px; align-items: center;">
-                <a th:href="@{/squadre/{id}(id=${squadra.id})}" 
-                   class="card-badge badge-blue" 
-                   style="text-decoration: none; flex: 1; text-align: center; display: inline-block; padding: 6px 12px;">
-                   Profilo Squadra
-                </a>
-                
-                <th:block sec:authorize="hasRole('ADMIN')">
-                    <a th:href="@{/admin/squadre/{id}/modifica(id=${squadra.id})}" 
-                       style="width: 28px; height: 28px; border-radius: 20px; background: #f1f5f9; text-decoration: none; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: background 0.2s;"
-                       onmouseover="this.style.background='#e2e8f0'"
-                       onmouseout="this.style.background='#f1f5f9'">
-                       ✏️
-                    </a>
-                    
-                    <form th:action="@{/admin/squadre/{id}/elimina(id=${squadra.id})}" method="post" style="margin: 0; display: flex;">
-                        <button type="submit" 
-                                style="width: 28px; height: 28px; border-radius: 20px; background: #f1f5f9; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 12px; transition: all 0.2s;"
-                                onmouseover="this.style.background='#fee2e2'; this.style.color='#991b1b';"
-                                onmouseout="this.style.background='#f1f5f9';"
-                                onclick="return confirm('Eliminare definitivamente questa squadra?')">
-                                🗑️
-                        </button>
-                    </form>
-                </th:block>
-            </div>
+
+                <div style="display: flex; align-items: center; justify-content: space-between; color: #475569; font-size: 13px;">
+                    <span>Apri scheda squadra</span>
+                    <span style="color: #1d4ed8; font-weight: 800;">Dettagli</span>
+                </div>
+            </a>
         </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(squadre)}" style="text-align: center; padding: 60px; color: #94a3b8;">
-        <p>Non ci sono ancora squadre iscritte al sistema.</p>
+    <div th:if="${#lists.isEmpty(squadre)}" class="empty-state">
+        Non ci sono ancora squadre iscritte al sistema.
     </div>
 </section>
 </body>

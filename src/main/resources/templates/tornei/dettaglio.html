@@ -6,70 +6,257 @@
 </head>
 <body>
 <section>
-    <div class="section-header">
-        <span class="section-title" th:text="${torneo.nome}">Nome Torneo</span>
-        <span class="card-badge badge-purple" th:text="${torneo.anno}">2026</span>
-    </div>
+    <style>
+        .tournament-page {
+            display: grid;
+            gap: 26px;
+        }
+        .tournament-cover {
+            position: relative;
+            overflow: hidden;
+            border-radius: 18px;
+            padding: 34px;
+            color: white;
+            background:
+                linear-gradient(135deg, rgba(15,23,42,0.92), rgba(22,101,52,0.84)),
+                radial-gradient(circle at 88% 18%, rgba(250,204,21,0.34), transparent 210px),
+                linear-gradient(135deg, #1d4ed8, #16a34a);
+            box-shadow: 0 22px 50px rgba(15, 23, 42, 0.22);
+        }
+        .tournament-year {
+            position: absolute;
+            right: 28px;
+            top: 28px;
+            z-index: 2;
+            background: rgba(255,255,255,0.94);
+            color: #1e40af;
+            border-radius: 14px;
+            padding: 10px 16px;
+            font-size: 20px;
+            font-weight: 900;
+        }
+        .tournament-cover::after {
+            content: "";
+            position: absolute;
+            right: -80px;
+            bottom: -120px;
+            width: 300px;
+            height: 300px;
+            border: 42px solid rgba(255,255,255,0.10);
+            border-radius: 50%;
+        }
+        .tournament-cover-content {
+            position: relative;
+            z-index: 1;
+            max-width: 780px;
+        }
+        .tournament-title {
+            font-size: 42px;
+            line-height: 1.05;
+            margin: 18px 0 14px;
+            max-width: 760px;
+        }
+        .tournament-description {
+            color: rgba(255,255,255,0.86);
+            font-size: 16px;
+            line-height: 1.7;
+            max-width: 760px;
+            overflow-wrap: anywhere;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 18px;
+        }
+        .action-card {
+            min-height: 150px;
+            border-radius: 16px;
+            color: white;
+            padding: 22px;
+            position: relative;
+            overflow: hidden;
+            text-decoration: none;
+            box-shadow: 0 16px 32px rgba(15,23,42,0.16);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .action-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 24px 45px rgba(15,23,42,0.22);
+        }
+        .action-card::after {
+            content: "";
+            position: absolute;
+            right: -40px;
+            top: -40px;
+            width: 130px;
+            height: 130px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.13);
+        }
+        .action-calendar { background: linear-gradient(135deg, #2563eb, #1e40af); }
+        .action-table { background: linear-gradient(135deg, #16a34a, #166534); }
+        .action-live { background: linear-gradient(135deg, #7c3aed, #4338ca); }
+        .action-label {
+            color: rgba(255,255,255,0.72);
+            font-size: 12px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+        .action-title {
+            display: block;
+            font-size: 24px;
+            font-weight: 850;
+            margin-top: 8px;
+        }
+        .action-copy {
+            color: rgba(255,255,255,0.82);
+            display: block;
+            font-size: 13px;
+            line-height: 1.5;
+            margin-top: 10px;
+            max-width: 220px;
+        }
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 22px;
+        }
+        .colored-panel {
+            border: 1px solid rgba(29,78,216,0.14);
+            border-radius: 16px;
+            padding: 22px;
+            background: linear-gradient(180deg, #ffffff 0%, #eef6ff 100%);
+            box-shadow: 0 10px 28px rgba(15,23,42,0.06);
+        }
+        .green-panel {
+            background: linear-gradient(180deg, #ffffff 0%, #ecfdf5 100%);
+            border-color: rgba(22,163,74,0.20);
+        }
+        .panel-heading {
+            color: #0f172a;
+            font-size: 17px;
+            font-weight: 850;
+            margin-bottom: 8px;
+        }
+        .panel-copy {
+            color: #64748b;
+            font-size: 14px;
+            line-height: 1.65;
+        }
+        .team-grid {
+            display: grid;
+            gap: 10px;
+            grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+            margin-top: 16px;
+        }
+        .team-link {
+            align-items: center;
+            background: rgba(255,255,255,0.76);
+            border: 1px solid #dbeafe;
+            border-radius: 10px;
+            color: #0f172a;
+            display: flex;
+            justify-content: space-between;
+            padding: 13px 14px;
+            text-decoration: none;
+            transition: border-color 0.2s, transform 0.2s, background 0.2s;
+        }
+        .team-link:hover {
+            background: white;
+            border-color: #60a5fa;
+            transform: translateX(3px);
+        }
+        .admin-strip {
+            align-items: center;
+            background: linear-gradient(135deg, #fff7ed 0%, #fef3c7 100%);
+            border: 1px solid #fed7aa;
+            border-radius: 16px;
+            display: flex;
+            gap: 12px;
+            justify-content: space-between;
+            padding: 18px;
+        }
+        .admin-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        @media (max-width: 900px) {
+            .action-grid, .content-grid {
+                grid-template-columns: 1fr;
+            }
+            .tournament-title {
+                font-size: 34px;
+            }
+        }
+    </style>
 
-    <div style="display: grid; grid-template-columns: 1fr 300px; gap: 24px;">
-        <div>
-            <div class="card">
-                <h4 style="margin-bottom: 10px; color: #1e293b;">Informazioni</h4>
-                <p style="color: #64748b; line-height: 1.6;" th:text="${torneo.descrizione}"></p>
-                
-                <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px;">
-                    <a th:href="@{/tornei/{id}/partite(id=${torneo.id})}" 
-                       class="card-badge badge-blue" 
-                       style="text-decoration: none;">
-                       📅 Calendario
-                    </a>
-                    
-                    <a th:href="@{/tornei/{id}/classifica(id=${torneo.id})}" 
-                       class="card-badge badge-green" 
-                       style="text-decoration: none;">
-                       🏆 Classifica
-                    </a>
-                    
-                    <a th:href="@{/react/classifica(torneoId=${torneo.id})}" 
-                       class="card-badge badge-purple" 
-                       style="text-decoration: none;">
-                       ⚛️ Live React
-                    </a>
-                </div>
+    <div class="tournament-page">
+        <div class="tournament-cover">
+            <div class="tournament-cover-content">
+                <h1 class="tournament-title" th:text="${torneo.nome}">Nome Torneo</h1>
+                <p class="tournament-description" th:if="${torneo.descrizione != null and !#strings.isEmpty(torneo.descrizione)}" th:text="${torneo.descrizione}">
+                    Descrizione del torneo
+                </p>
+                <p class="tournament-description" th:if="${torneo.descrizione == null or #strings.isEmpty(torneo.descrizione)}">
+                    Nessuna descrizione inserita per questo torneo.
+                </p>
             </div>
+            <div class="tournament-year" th:text="${torneo.anno}">2026</div>
+        </div>
 
-            <div sec:authorize="hasRole('ADMIN')" class="card" style="border: 1px dashed #2563eb; background: #f0f7ff; border-radius: 12px;">
-                <h4 style="margin-bottom: 15px; color: #1e40af;">Pannello Admin</h4>
-                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    <a th:href="@{/admin/tornei/{id}/modifica(id=${torneo.id})}" class="card-badge badge-blue">Modifica Torneo</a>
-                    <a th:href="@{/admin/partite/nuova(torneoId=${torneo.id})}" class="card-badge badge-green">+ Nuova Partita</a>
-                    <a th:href="@{/admin/tornei/{id}/squadre(id=${torneo.id})}" class="card-badge badge-purple">Gestisci Iscrizioni</a>
+        <div class="action-grid">
+            <a th:href="@{/tornei/{id}/partite(id=${torneo.id})}" class="action-card action-calendar">
+                <span class="action-label">Programma</span>
+                <span class="action-title">Calendario</span>
+                <span class="action-copy">Date, campi, squadre e dettagli di ogni incontro.</span>
+            </a>
+            <a th:href="@{/tornei/{id}/classifica(id=${torneo.id})}" class="action-card action-table">
+                <span class="action-label">Risultati</span>
+                <span class="action-title">Classifica</span>
+                <span class="action-copy">Punti, vittorie, pareggi e andamento del torneo.</span>
+            </a>
+            <a th:href="@{/react/classifica(torneoId=${torneo.id})}" class="action-card action-live">
+                <span class="action-label">Frontend React</span>
+                <span class="action-title">Vista live</span>
+                <span class="action-copy">La classifica caricata tramite API REST.</span>
+            </a>
+        </div>
+
+        <div class="content-grid">
+            <aside class="colored-panel green-panel">
+                <div class="panel-heading">Squadre partecipanti</div>
+                <p class="panel-copy" th:if="${!#lists.isEmpty(squadre)}">Le squadre iscritte a questo torneo.</p>
+                <div class="team-grid">
+                    <a th:each="squadra : ${squadre}"
+                       th:href="@{/squadre/{id}(id=${squadra.id})}"
+                       class="team-link">
+                        <strong th:text="${squadra.nome}">Nome Squadra</strong>
+                        <span style="color: #64748b; font-size: 12px;" th:text="${squadra.citta}">Citta</span>
+                    </a>
                 </div>
+                <p th:if="${#lists.isEmpty(squadre)}" class="panel-copy">Nessuna squadra iscritta.</p>
+            </aside>
+        </div>
+
+        <div sec:authorize="hasRole('ADMIN')" class="admin-strip">
+            <div>
+                <strong style="display: block; color: #7c2d12;">Gestione amministratore</strong>
+                <span style="color: #9a3412; font-size: 13px;">Modifica torneo, partite e iscrizioni.</span>
+            </div>
+            <div class="admin-actions">
+                <a th:href="@{/admin/tornei/{id}/modifica(id=${torneo.id})}" class="card-badge badge-blue" style="text-decoration: none; padding: 10px 14px;">Modifica torneo</a>
+                <a th:href="@{/admin/partite/nuova(torneoId=${torneo.id})}" class="card-badge badge-green" style="text-decoration: none; padding: 10px 14px;">Nuova partita</a>
+                <a th:href="@{/admin/tornei/{id}/squadre(id=${torneo.id})}" class="card-badge badge-yellow" style="text-decoration: none; padding: 10px 14px;">Gestisci squadre</a>
+                <form th:action="@{/admin/tornei/{id}/elimina(id=${torneo.id})}" method="post" class="inline-action-form">
+                    <button type="submit" class="card-badge badge-red" style="border: none; cursor: pointer; padding: 10px 14px;" onclick="return confirm('Eliminare definitivamente questo torneo, le sue partite e i commenti collegati?')">Elimina torneo</button>
+                </form>
             </div>
         </div>
 
-        <div>
-            <div class="card" style="padding: 0; overflow: hidden; border-radius: 12px;">
-                <div style="padding: 12px 16px; background: #f8fafc; border-bottom: 1px solid #e2e8f0; font-weight: 600; font-size: 14px; color: #475569;">
-                    Squadre Partecipanti
-                </div>
-                <div style="padding: 8px 0;">
-                    <div th:each="squadra : ${squadre}" style="padding: 8px 16px;">
-                        <a th:href="@{/squadre/{id}(id=${squadra.id})}" 
-                           style="text-decoration: none; color: #1e293b; font-size: 14px; display: block; transition: color 0.2s;" 
-                           onmouseover="this.style.color='#2563eb'" 
-                           onmouseout="this.style.color='#1e293b'"
-                           th:text="${squadra.nome}"></a>
-                    </div>
-                    <div th:if="${#lists.isEmpty(squadre)}" style="padding: 16px; text-align: center; color: #94a3b8; font-size: 13px;">
-                        Nessuna squadra iscritta.
-                    </div>
-                </div>
-            </div>
-        </div>
+        <a th:href="@{/tornei}" class="see-all">&larr; Torna alla lista tornei</a>
     </div>
-    
-    <a th:href="@{/tornei}" style="text-decoration: none; color: #64748b; font-size: 14px; display: inline-block; margin-top: 20px; transition: color 0.2s;" onmouseover="this.style.color='#2563eb'" onmouseout="this.style.color='#64748b'">← Torna alla lista tornei</a>
 </section>
 </body>
 </html>

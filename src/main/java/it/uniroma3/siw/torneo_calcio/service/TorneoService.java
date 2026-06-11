@@ -7,6 +7,7 @@ import it.uniroma3.siw.torneo_calcio.model.Torneo;
 import it.uniroma3.siw.torneo_calcio.repository.PartitaRepository;
 import it.uniroma3.siw.torneo_calcio.repository.SquadraRepository;
 import it.uniroma3.siw.torneo_calcio.repository.TorneoRepository;
+import it.uniroma3.siw.torneo_calcio.repository.CommentoRepository;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.data.repository.CrudRepository;
@@ -26,19 +27,27 @@ public class TorneoService {
 	private TorneoRepository torneoRepository;
 	private PartitaRepository partitaRepository;
 	private SquadraRepository squadraRepository;
+    private CommentoRepository commentoRepository;
 
 	
 	public TorneoService(TorneoRepository torneoRepository,
 	                     PartitaRepository partitaRepository,
-	                     SquadraRepository squadraRepository) {
+	                     SquadraRepository squadraRepository,
+                         CommentoRepository commentoRepository) {
 	    this.torneoRepository = torneoRepository;
 	    this.partitaRepository = partitaRepository;
 	    this.squadraRepository = squadraRepository;
+        this.commentoRepository = commentoRepository;
 	}
 
 	@Transactional(readOnly = true)
     public List<Torneo> findAll() {
         return torneoRepository.findAll();
+    }
+
+    @Transactional(readOnly = true)
+    public List<Torneo> cercaPerNome(String nome) {
+        return torneoRepository.findByNomeContainingIgnoreCase(nome);
     }
 
     @Transactional(readOnly = true)
@@ -53,12 +62,20 @@ public class TorneoService {
 
     @Transactional
     public void deleteById(Long id) {
+        commentoRepository.deleteByTorneoId(id);
         torneoRepository.deleteById(id);
     }
     
     @Transactional(readOnly = true)
     public Optional<Torneo> findByIdWithSquadre(Long id) {
         return torneoRepository.findWithSquadreById(id);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Squadra> findSquadreByTorneoId(Long torneoId) {
+        return torneoRepository.findWithSquadreById(torneoId)
+                .map(Torneo::getSquadre)
+                .orElse(List.of());
     }
     @Transactional(readOnly = true)
     public List<Map<String, Object>> calcolaClassifica(Long torneoId) {

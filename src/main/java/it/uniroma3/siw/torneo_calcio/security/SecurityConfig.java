@@ -33,6 +33,7 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 	    http
+	        .csrf(csrf -> csrf.disable())
 	        .authorizeHttpRequests(auth -> auth
 	            // Forza l'accesso esplicito a registrazione e login prima di tutto il resto
 	            .requestMatchers("/registrazione", "/login").permitAll() 

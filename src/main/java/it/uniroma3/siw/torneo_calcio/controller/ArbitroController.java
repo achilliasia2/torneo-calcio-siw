@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 public class ArbitroController {
@@ -54,6 +55,15 @@ public class ArbitroController {
         }
         arbitro.setId(id);
         arbitroService.save(arbitro);
+        return "redirect:/admin/arbitri";
+    }
+
+    @PostMapping("/admin/arbitri/{id}/elimina")
+    public String eliminaArbitro(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        boolean eliminato = arbitroService.deleteIfNotUsedInPartite(id);
+        if (!eliminato) {
+            redirectAttributes.addFlashAttribute("erroreEliminazione", "L'arbitro non puo essere eliminato perche e assegnato a una o piu partite.");
+        }
         return "redirect:/admin/arbitri";
     }
 }

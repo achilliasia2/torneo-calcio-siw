@@ -11,4 +11,7 @@ public interface SquadraRepository extends JpaRepository<Squadra, Long> {
 
     @EntityGraph(attributePaths = {"giocatori"})
     Optional<Squadra> findWithGiocatoriById(Long id);
+
+    @EntityGraph(attributePaths = {"tornei"})
+    Optional<Squadra> findWithTorneiById(Long id);
 }

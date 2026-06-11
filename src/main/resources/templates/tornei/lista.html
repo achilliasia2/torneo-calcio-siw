@@ -2,28 +2,38 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: i_mio_layout(~{::section})}">
 <body>
 <section>
-    <div class="section-header">
-        <span class="section-title">Tornei Disponibili</span>
-        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/tornei/nuovo}" class="card-badge badge-blue" style="text-decoration: none;">+ Crea Nuovo Torneo</a>
+    <div class="page-hero">
+        <h1>Tornei disponibili</h1>
+        <p>Consulta i tornei attivi, entra nel centro torneo e raggiungi rapidamente calendario, classifiche e squadre partecipanti.</p>
+        <a sec:authorize="hasRole('ADMIN')" th:href="@{/admin/tornei/nuovo}" class="page-hero-badge" style="text-decoration: none;">+ Nuovo</a>
     </div>
 
-    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">
-        <div class="card" th:each="torneo : ${tornei}">
-            <span th:classappend="${torneo.anno >= 2026} ? 'badge-blue' : 'badge-purple'" 
+    <form th:action="@{/tornei}" method="get" class="sport-card" style="display: flex; gap: 12px; align-items: flex-end; margin-bottom: 22px; flex-wrap: wrap;">
+        <div class="form-field" style="flex: 1; min-width: 240px; margin-bottom: 0;">
+            <label>Cerca torneo</label>
+            <input type="text" name="q" th:value="${q}" placeholder="Scrivi il nome del torneo">
+        </div>
+        <button type="submit" class="btn-action">Cerca</button>
+        <a th:if="${q != null and !#strings.isEmpty(q)}" th:href="@{/tornei}" class="muted-action">Mostra tutti</a>
+    </form>
+
+    <div class="sport-grid">
+        <div class="sport-card" th:each="torneo : ${tornei}">
+            <span th:classappend="${torneo.anno >= 2026} ? 'badge-green' : 'badge-purple'"
                   class="card-badge" th:text="${torneo.anno}">2026</span>
-            
-            <h3 style="margin: 12px 0 8px 0; font-size: 18px; color: #1e293b;" th:text="${torneo.nome}">Nome Torneo</h3>
-            <p style="font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 20px;" th:text="${torneo.descrizione}">Descrizione breve del torneo...</p>
-            
-            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #f1f5f9; pt: 15px; margin-top: auto;">
-                <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="card-btn" style="text-decoration: none;">Vedi Dettaglio</a>
-                <span style="font-size: 12px; color: #94a3b8;" th:text="${numeroPartitePerTorneo[torneo.id]} + ' partite'">0 partite</span>
+            <h3 style="margin: 14px 0 8px; font-size: 21px; color: #0f172a;" th:text="${torneo.nome}">Nome Torneo</h3>
+            <p class="card-description" style="font-size: 14px; color: #64748b; min-height: 46px;" th:text="${torneo.descrizione}">Descrizione breve del torneo...</p>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid #dbeafe; padding-top: 16px; margin-top: 18px;">
+                <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="card-btn" style="text-decoration: none;">Apri torneo</a>
+                <span style="font-size: 13px; color: #1e40af; font-weight: 800;" th:text="${numeroPartitePerTorneo[torneo.id]} + ' partite'">0 partite</span>
             </div>
         </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(tornei)}" style="text-align: center; padding: 60px; color: #94a3b8;">
-        <p>Nessun torneo disponibile al momento.</p>
+    <div th:if="${#lists.isEmpty(tornei)}" class="sport-card" style="text-align: center; padding: 60px; color: #64748b;">
+        <p th:if="${q == null or #strings.isEmpty(q)}">Nessun torneo disponibile al momento.</p>
+        <p th:if="${q != null and !#strings.isEmpty(q)}">Nessun torneo trovato per questa ricerca.</p>
     </div>
 </section>
 </body>

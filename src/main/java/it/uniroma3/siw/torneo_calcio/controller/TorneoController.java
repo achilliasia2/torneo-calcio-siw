@@ -43,10 +43,12 @@ public class TorneoController {
 		this.torneoRepository = torneoRepository;
 	}
 
-	// pagina principale - lista tornei (pubblica)
+    // pagina principale - lista tornei (pubblica)
     @GetMapping("/tornei")
-    public String listaTornei(Model model) {
-        List<Torneo> tornei = torneoService.findAll();
+    public String listaTornei(@RequestParam(required = false) String q, Model model) {
+        List<Torneo> tornei = (q != null && !q.isBlank())
+                ? torneoService.cercaPerNome(q.trim())
+                : torneoService.findAll();
         Map<Long, Long> numeroPartitePerTorneo = tornei.stream()
                 .collect(Collectors.toMap(
                         Torneo::getId,
@@ -54,6 +56,7 @@ public class TorneoController {
                 ));
         model.addAttribute("tornei", tornei);
         model.addAttribute("numeroPartitePerTorneo", numeroPartitePerTorneo);
+        model.addAttribute("q", q);
         return "tornei/lista";
     }
 
@@ -100,6 +103,12 @@ public class TorneoController {
         }
         torneo.setId(id);
         torneoService.save(torneo);
+        return "redirect:/tornei";
+    }
+
+    @PostMapping("/admin/tornei/{id}/elimina")
+    public String eliminaTorneo(@PathVariable Long id) {
+        torneoService.deleteById(id);
         return "redirect:/tornei";
     }
     

@@ -2,30 +2,33 @@
 <html xmlns:th="http://www.thymeleaf.org" th:replace="~{layout :: i_mio_layout(~{::section})}">
 <body>
 <section>
-    <div class="section-header">
-        <span class="section-title" th:text="${squadra.id == null} ? 'Nuova Squadra' : 'Modifica Squadra'">Form Squadra</span>
+    <div class="page-hero">
+        <h1 th:text="${squadra.id == null} ? 'Nuova squadra' : 'Modifica squadra'">Form Squadra</h1>
+        <p>Inserisci nome, citta e anno di fondazione della squadra.</p>
     </div>
 
-    <div class="card" style="max-width: 500px; margin: 0 auto;">
+    <div class="form-panel">
         <form th:action="${squadra.id == null} ? @{/admin/squadre/nuova} : @{/admin/squadre/{id}/modifica(id=${squadra.id})}" th:object="${squadra}" method="post">
-            <div th:if="${#fields.hasErrors('*')}" style="margin-bottom: 15px; padding: 12px; border-radius: 8px; background: #fee2e2; color: #991b1b; font-size: 13px;">
+            <div th:if="${#fields.hasErrors('*')}" class="badge-red" style="padding: 12px; border-radius: 8px; margin-bottom: 18px; font-size: 13px;">
                 Controlla i dati inseriti.
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Nome Squadra</label>
-                <input type="text" th:field="*{nome}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+
+            <div class="form-field">
+                <label>Nome squadra</label>
+                <input type="text" th:field="*{nome}" required>
             </div>
-            <div style="margin-bottom: 15px;">
-                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Città</label>
-                <input type="text" th:field="*{citta}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            <div class="form-field">
+                <label>Citta</label>
+                <input type="text" th:field="*{citta}" required>
             </div>
-            <div style="margin-bottom: 20px;">
-                <label style="display:block; font-size:12px; color:#64748b; margin-bottom:5px;">Anno di Fondazione</label>
-                <input type="number" th:field="*{annoFondazione}" style="width:100%; padding:10px; border:1px solid #e2e8f0; border-radius:8px;" required>
+            <div class="form-field">
+                <label>Anno di fondazione</label>
+                <input type="number" th:field="*{annoFondazione}" required>
             </div>
-            <div style="display: flex; gap: 10px;">
-                <button type="submit" class="card-btn" style="flex: 2; border: none; cursor: pointer;">Salva Squadra</button>
-                <a th:href="@{/squadre}" style="flex: 1; text-align: center; padding: 10px; border: 1px solid #e2e8f0; border-radius: 8px; text-decoration: none; color: #64748b; font-size: 14px;">Annulla</a>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-action" style="flex: 2;">Salva squadra</button>
+                <a th:href="@{/squadre}" class="muted-action" style="flex: 1; text-align: center;">Annulla</a>
             </div>
         </form>
     </div>

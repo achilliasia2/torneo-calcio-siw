@@ -69,6 +69,7 @@ public class Torneo {
     @NotNull
     private Integer anno;
 
+    @Column(columnDefinition = "TEXT")
     private String descrizione;
 
     @ManyToMany

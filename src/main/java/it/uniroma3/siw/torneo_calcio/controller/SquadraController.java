@@ -8,6 +8,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -74,8 +75,12 @@ public class SquadraController {
     }
 
     @PostMapping("/admin/squadre/{id}/elimina")
-    public String eliminaSquadra(@PathVariable Long id) {
-        squadraService.deleteById(id);
+    public String eliminaSquadra(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+        boolean eliminata = squadraService.deleteIfNotUsedInPartite(id);
+        if (!eliminata) {
+            redirectAttributes.addFlashAttribute("erroreEliminazione", "La squadra non puo essere eliminata perche e gia presente in una o piu partite.");
+            return "redirect:/squadre/" + id;
+        }
         return "redirect:/squadre";
     }
 }

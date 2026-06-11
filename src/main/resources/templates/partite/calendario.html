@@ -2,41 +2,40 @@
 <html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" th:replace="~{layout :: i_mio_layout(~{::section})}">
 <body>
 <section>
-    <div class="section-header">
-        <div>
-            <span class="section-title">Calendario</span>
-            <p style="font-size: 14px; color: #64748b;" th:text="${torneo.nome}"></p>
-        </div>
+    <div class="page-hero">
+        <h1>Calendario</h1>
+        <p th:text="${torneo.nome}">Nome torneo</p>
+        <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="page-hero-badge" style="text-decoration: none;">Torneo</a>
     </div>
 
-    <div class="card" style="padding: 0; overflow-x: auto;">
-        <table style="width: 100%; border-collapse: collapse; min-width: 600px;">
+    <div class="sport-table-card">
+        <table class="sport-table">
             <thead>
-                <tr style="background: #f8fafc; border-bottom: 1px solid #e2e8f0; text-align: left;">
-                    <th style="padding: 12px 16px; font-size: 12px; color: #64748b; text-transform: uppercase;">Data</th>
-                    <th style="padding: 12px 16px; font-size: 12px; color: #64748b; text-transform: uppercase;">Partita</th>
-                    <th style="padding: 12px 16px; font-size: 12px; color: #64748b; text-transform: uppercase; text-align: center;">Risultato</th>
-                    <th style="padding: 12px 16px; font-size: 12px; color: #64748b; text-transform: uppercase; text-align: right;">Azioni</th>
+                <tr>
+                    <th>Data</th>
+                    <th>Partita</th>
+                    <th style="text-align: center;">Risultato</th>
+                    <th style="text-align: right;">Azioni</th>
                 </tr>
             </thead>
             <tbody>
-                <tr th:each="partita : ${partite}" style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 12px 16px;">
-                        <div style="font-weight: 600;" th:text="${#temporals.format(partita.dataOra, 'dd MMM HH:mm')}"></div>
-                        <div style="font-size: 12px; color: #94a3b8;" th:text="${partita.luogo}"></div>
+                <tr th:each="partita : ${partite}">
+                    <td>
+                        <div style="font-weight: 800; color: #0f172a;" th:text="${#temporals.format(partita.dataOra, 'dd MMM HH:mm')}"></div>
+                        <div style="font-size: 12px; color: #64748b;" th:text="${partita.luogo}"></div>
                     </td>
-                    <td style="padding: 12px 16px;">
-                        <span style="font-weight: 500;" th:text="${partita.squadraHome.nome}"></span>
-                        <span style="color: #cbd5e1; margin: 0 4px;">vs</span>
-                        <span style="font-weight: 500;" th:text="${partita.squadraAway.nome}"></span>
+                    <td>
+                        <span style="font-weight: 800;" th:text="${partita.squadraHome.nome}"></span>
+                        <span style="color: #94a3b8; margin: 0 6px;">vs</span>
+                        <span style="font-weight: 800;" th:text="${partita.squadraAway.nome}"></span>
                     </td>
-                    <td style="padding: 12px 16px; text-align: center;">
-                        <span th:if="${partita.stato?.name() == 'PLAYED'}" 
-                              style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 700; color: #1e293b;"
+                    <td style="text-align: center;">
+                        <span th:if="${partita.stato?.name() == 'PLAYED'}"
+                              class="card-badge badge-green"
                               th:text="${partita.goalsHome + ' - ' + partita.goalsAway}"></span>
-                        <span th:if="${partita.stato?.name() != 'PLAYED'}" class="card-badge" style="background: #f8fafc; color: #94a3b8;">Programmata</span>
+                        <span th:if="${partita.stato?.name() != 'PLAYED'}" class="card-badge badge-blue">Programmata</span>
                     </td>
-                    <td style="padding: 12px 16px; text-align: right;">
+                    <td style="text-align: right;">
                         <div style="display: flex; gap: 8px; justify-content: flex-end;">
                             <a th:href="@{/partite/{id}(id=${partita.id})}" class="card-badge badge-blue" style="text-decoration: none;">Dettagli</a>
                             <th:block sec:authorize="hasRole('ADMIN')">
@@ -48,7 +47,7 @@
             </tbody>
         </table>
     </div>
-    <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="see-all" style="display: inline-block; margin-top: 20px;">← Torna al torneo</a>
+    <a th:href="@{/tornei/{id}(id=${torneo.id})}" class="see-all" style="display: inline-block; margin-top: 20px;">&larr; Torna al torneo</a>
 </section>
 </body>
 </html>
